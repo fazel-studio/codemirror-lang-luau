@@ -1,0 +1,556 @@
+# Chunk empty
+
+==>
+Script(...)
+
+# Assignment single
+a = 1
+==>
+Script(...)
+
+# Assignment multiple
+a, b = 1, 2
+==>
+Script(...)
+
+# Function call with parentheses
+print("hello")
+==>
+Script(...)
+
+# Function call without parentheses string literal
+print "hello"
+==>
+Script(...)
+
+# Function call with table constructor
+print{}
+==>
+Script(...)
+
+# Do block
+do print(1) end
+==>
+Script(...)
+
+# While loop
+while true do print(1) end
+==>
+Script(...)
+
+# Repeat until
+repeat print(1) until true
+==>
+Script(...)
+
+# If statement simple
+if true then print(1) end
+==>
+Script(...)
+
+# If statement with elseif and else
+if a then b() elseif c then d() else e() end
+==>
+Script(...)
+
+# For loop numeric
+for i = 1, 10 do print(i) end
+==>
+Script(...)
+
+# For loop numeric with step
+for i = 1, 10, 2 do print(i) end
+==>
+Script(...)
+
+# For loop generic
+for k, v in pairs(t) do print(k) end
+==>
+Script(...)
+
+# Function declaration
+function foo() print(1) end
+==>
+Script(...)
+
+# Function declaration with params
+function foo(a, b) return a + b end
+==>
+Script(...)
+
+# Function declaration with vararg
+function foo(...) print(...) end
+==>
+Script(...)
+
+# Local declaration single
+local x = 10
+==>
+Script(...)
+
+# Local declaration multiple
+local a, b = 1, 2
+==>
+Script(...)
+
+# Local function
+local function foo() print(1) end
+==>
+Script(...)
+
+# Return simple
+return
+==>
+Script(...)
+
+# Return multiple
+return 1, 2, 3
+==>
+Script(...)
+
+# Break
+while true do break end
+==>
+Script(...)
+
+# Table constructor empty
+local t = {}
+==>
+Script(...)
+
+# Table constructor array style
+local t = {1, 2, 3}
+==>
+Script(...)
+
+# Table constructor record style
+local t = {name = "Alice", age = 30}
+==>
+Script(...)
+
+# Table constructor mixed
+local t = {1, 2, name = "Alice", ["key"] = value}
+==>
+Script(...)
+
+# Table constructor expression key
+local t = {["key"] = value}
+==>
+Script(...)
+
+# Function definition expression
+local f = function(a, b) return a + b end
+==>
+Script(...)
+
+# Method definition
+function obj:method(param) self.value = param end
+==>
+Script(...)
+
+# Method call
+obj:method("hello")
+==>
+Script(...)
+
+# String literal double quoted
+local s = "hello"
+==>
+Script(...)
+
+# String literal single quoted
+local s = 'hello'
+==>
+Script(...)
+
+# String escapes
+local s = "\n\t\"\\"
+==>
+Script(...)
+
+# Long string simple
+local s = [[hello world]]
+==>
+Script(...)
+
+# Long string with equals
+local s = [=[hello world]=]
+==>
+Script(...)
+
+# Number integer
+local n = 10
+==>
+Script(...)
+
+# Number float
+local n = 3.14
+==>
+Script(...)
+
+# Number float dot leading
+local n = .5
+==>
+Script(...)
+
+# Line comment
+-- comment
+local x = 1
+==>
+Script(...)
+
+# Block comment simple
+--[[ comment ]]
+local x = 1
+==>
+Script(...)
+
+# Block comment with equals
+--[=[ comment ]=]
+local x = 1
+==>
+Script(...)
+
+# Arithmetic expression
+local x = 1 + 2 * 3 - 4 / 5 ^ 2 % 3 // 2
+==>
+Script(...)
+
+# Relational expression
+local x = a < b and c > d and e <= f and g >= h and i == j and k ~= l
+==>
+Script(...)
+
+# Logical expression
+local x = a and b or not c
+==>
+Script(...)
+
+# Concatenation
+local s = "Hello" .. " " .. "World"
+==>
+Script(...)
+
+# Length operator
+local n = #array
+==>
+Script(...)
+
+# Parentheses expression
+local x = (a + b) * c
+==>
+Script(...)
+
+# Vararg
+function foo(...) print(...) end
+==>
+Script(...)
+
+# Table field access dot
+local x = person.name
+==>
+Script(...)
+
+# Table field access bracket
+local x = person["name"]
+==>
+Script(...)
+
+# Type annotation
+local x: number = 1
+==>
+Script(...)
+
+# Type alias
+type User = { name: string }
+==>
+Script(...)
+
+# Generic type
+type Pair<T, U> = { first: T, second: U }
+==>
+Script(...)
+
+# Union type
+local x: number | string = 42
+==>
+Script(...)
+
+# Intersection type
+type A = { x: number } & { y: number }
+==>
+Script(...)
+
+# Optional type
+local x: number? = nil
+==>
+Script(...)
+
+# Type cast
+local names: {string} = table.pack("a") :: {string}
+==>
+Script(...)
+
+# Compound assignment all
+local x = 0
+x += 5
+x -= 5
+x *= 2
+x /= 2
+x //= 2
+x %= 2
+x ^= 2
+local s = "a"
+s ..= "!"
+==>
+Script(...)
+
+# Continue statement
+for i = 1, 10 do if i % 2 == 0 then continue end print(i) end
+==>
+Script(...)
+
+# String interpolation simple
+local s = `Hello {world}`
+==>
+Script(...)
+
+# String interpolation with expression
+local s = `Score: {score + 10}`
+==>
+Script(...)
+
+# If expression
+local status = if age >= 18 then "adult" else "minor"
+==>
+Script(...)
+
+# Bitwise operators
+local x = a & b | c ~ d << 1 >> 1
+==>
+Script(...)
+
+# Extended string escapes
+local s = "\x41 \u{0041} long \z line"
+==>
+Script(...)
+
+# Extended numeric literals
+local a = 0xFF
+local b = 0b1010
+local c = 1_000_000
+local d = 0xFFFF_FFFF
+==>
+Script(...)
+
+# Type checking mode directives
+--!strict
+local x = 1
+==>
+Script(...)
+
+# Function attributes simple
+@[attribute] function foo() end
+==>
+Script(...)
+
+# Function attributes with param
+@[attribute(param)] function bar() end
+==>
+Script(...)
+
+# Continue disambiguation statement vs assignment vs call
+do continue end
+do continue = 5 end
+do continue(5) end
+==>
+Script(...)
+
+# Edge case type as identifier
+local type = 10
+==>
+Script(...)
+
+# File with only comments
+-- comment
+--[[ block ]]
+==>
+Script(...)
+
+# Full Luau example from spec
+--!strict
+type User = {
+    id: number,
+    name: string,
+}
+local person: User = {
+    id = 1,
+    name = "Alice",
+}
+function greet(name: string): string
+    return "Hello, " .. name .. "!"
+end
+local msg = `Hello, {person.name}!`
+x += 5
+for i = 1, 10 do
+    if i % 2 == 0 then continue end
+    print(i)
+end
+local status = if age >= 18 then "adult" else "minor"
+==>
+Script(...)
+
+# Export type simple
+export type Foo = { bar: number }
+==>
+Script(...)
+
+# Export type generic
+export type Bar<T> = { value: T }
+==>
+Script(...)
+
+# Typeof simple
+type Foo = typeof(bar)
+==>
+Script(...)
+
+# Typeof with call
+local x: typeof(y) = y
+==>
+Script(...)
+
+# Typeof string literal
+type Foo = typeof(string)
+==>
+Script(...)
+
+# Named function type
+local f: (x: number) -> string = function(x) return tostring(x) end
+==>
+Script(...)
+
+# Named function type two params
+type F = (a: number, b: string) -> boolean
+==>
+Script(...)
+
+# Vararg function type
+local f: (...number) -> () = function(...) end
+==>
+Script(...)
+
+# If expression with elseif
+local x = if a then b elseif c then d else e
+==>
+Script(...)
+
+# Pack type generic
+type Pack<T...> = (T...) -> number
+==>
+Script(...)
+
+# Variadic generic function
+function foo<T...>(...: T...): () end
+==>
+Script(...)
+
+# Double type cast
+local x = a :: number :: string
+==>
+Script(...)
+
+# Optional param in function
+function foo(a: number, b: string?): string return a .. b end
+==>
+Script(...)
+
+# Complex union intersection
+local x: number | string & boolean? = nil
+==>
+Script(...)
+
+# Array type shorthand
+local x: {string} = {}
+==>
+Script(...)
+
+# Indexer type
+type A = { [string]: number }
+==>
+Script(...)
+
+# Semicolon field separator
+type Foo = { a: number; b: string; }
+==>
+Script(...)
+
+# Pow right associative
+local x = a ^ b ^ c
+==>
+Script(...)
+
+# Concat right associative
+local x = a .. b .. c
+==>
+Script(...)
+
+# Multi return type
+local function foo(): (number, string) return 1, "a" end
+==>
+Script(...)
+
+# String interpolation nested if
+local s = `result: {if true then 1 else 2}`
+==>
+Script(...)
+
+# String interpolation multiple
+local s = `a {b} c {d + e} f`
+==>
+Script(...)
+
+# String interpolation with dot access
+local s = `Hello {world} and {foo.bar}`
+==>
+Script(...)
+
+# Attribute on export type
+@[attr] export type Foo = number
+==>
+Script(...)
+
+# Complex prefix var
+local x = (a).b.c[1]:method()
+==>
+Script(...)
+
+# Triple call chaining
+foo()()()
+==>
+Script(...)
+
+# Method chaining
+obj:method():method2()
+==>
+Script(...)
+
+# Generic function with attribute
+@[native] function foo<T>(x: T): T return x end
+==>
+Script(...)
+
+# Table type with optional field
+type Foo = { a: number? }
+==>
+Script(...)
+
+# Function type unnamed
+type F = (number, string) -> boolean
+==>
+Script(...)
+
+# Type cast wrapped
+local x = (a :: number) + 1
+==>
+Script(...)

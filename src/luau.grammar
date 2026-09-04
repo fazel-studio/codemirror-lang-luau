@@ -1,0 +1,352 @@
+@top Script { Block }
+
+@external tokens ext from "./tokens.js" {
+  BlockComment,
+  LongString,
+  InterpStart,
+  InterpContent,
+  InterpEnd
+}
+
+@tokens {
+  space { @whitespace+ }
+  LineComment { "--" ![\n]* }
+  Number {
+    "0" $[xX] $[0-9a-fA-F_]+ |
+    "0" $[bB] $[01_]+ |
+    $[0-9] $[0-9_]* ("." $[0-9_]* )? ($[eE] $[+-]? $[0-9_]+ )? |
+    "." $[0-9] $[0-9_]* ($[eE] $[+-]? $[0-9_]+ )?
+  }
+  String {
+    '"' ( !["\n\\] | "\\" _ )* '"' |
+    "'" ( !['\n\\] | "\\" _ )* "'"
+  }
+  Identifier { $[a-zA-Z_]$[a-zA-Z0-9_]* }
+  @precedence { LineComment, "-" }
+  @precedence { "::", ":" }
+  @precedence { "..=", "...", ".." }
+  @precedence { "//=", "//" }
+}
+
+@skip { space | LineComment | BlockComment }
+
+@precedence { typeDef @left, call @left, generic @left, pack @left, optional @left, shift @left, exp @right, bitor @left, bitxor @left, bitand @left, mul @left, add @left, concat @right, cmp @left, tern @right, logicAnd @left, logicOr @left, cast @right }
+
+Block {
+  Statement* ReturnStatement?
+}
+
+Statement {
+  Attribute* (
+    ExportTypeAlias ";"* |
+    TypeAlias ";"* |
+    FunctionDeclaration ";"* |
+    LocalDeclaration ";"* |
+    DoBlock ";"* |
+    WhileBlock ";"* |
+    RepeatBlock ";"* |
+    IfStatement ";"* |
+    ForBlock ";"* |
+    ContinueStatement ";"* |
+    BreakStatement ";"* |
+    CompoundAssignment ";"* |
+    Assignment ";"* |
+    CallStatement ";"*
+  )
+}
+
+Attribute {
+  "@" "[" Identifier AttributeArgs? "]"
+}
+
+AttributeArgs {
+  "(" ExpList? ")"
+}
+
+ExportTypeAlias {
+  kwExport ~type TypeAlias
+}
+
+TypeAlias {
+  kwType ~type TypeName TypeParams? "=" Type
+}
+
+TypeParams {
+  "<" TypeParam ("," TypeParam)* ">"
+}
+
+TypeParam {
+  TypeName "..."?
+}
+
+FunctionDeclaration {
+  kwFunction FunctionName TypeParams? FunctionBody
+}
+
+FunctionName {
+  VariableName ("." VariableName)* (":" VariableName)?
+}
+
+FunctionBody {
+  "(" ParamList? ")" ReturnTypeAnno? Block kwEnd
+}
+
+ParamList {
+  Param ("," Param)*
+}
+
+Param {
+  VariableName TypeAnno? |
+  "..." TypeAnno?
+}
+
+LocalDeclaration {
+  kwLocal VariableNameList TypeAnno? ("=" ExpList)? |
+  kwLocal kwFunction VariableName TypeParams? FunctionBody
+}
+
+VariableNameList {
+  VariableName ("," VariableName)*
+}
+
+VariableName { Identifier | kwContinue ~cont | kwType ~type | kwExport ~type | kwTypeof ~type }
+
+TypeName { Identifier }
+
+DoBlock {
+  kwDo Block kwEnd
+}
+
+WhileBlock {
+  kwWhile Expression kwDo Block kwEnd
+}
+
+RepeatBlock {
+  kwRepeat Block kwUntil Expression
+}
+
+IfStatement {
+  kwIf Expression kwThen Block (kwElseif Expression kwThen Block)* (kwElse Block)? kwEnd
+}
+
+ForBlock {
+  kwFor VariableName "=" Expression "," Expression ("," Expression)? kwDo Block kwEnd |
+  kwFor VariableNameList kwIn ExpList kwDo Block kwEnd
+}
+
+BreakStatement { kwBreak }
+ContinueStatement { kwContinue ~cont }
+
+CompoundAssignment {
+  Var CompoundOp Expression
+}
+
+CompoundOp { "+=" | "-=" | "*=" | "/=" | "//=" | "%=" | "^=" | "..=" }
+
+Assignment {
+  VarList "=" ExpList
+}
+
+VarList { Var ("," Var)* }
+
+CallStatement {
+  CallExpr
+}
+
+PrefixExp {
+  PrimaryPrefix Suffix*
+}
+
+PrimaryPrefix {
+  VariableName ~stmt |
+  "(" Expression ")"
+}
+
+Suffix {
+  "[" Expression "]" |
+  "." VariableName
+}
+
+Args {
+  !call "(" ExpList? ")" |
+  TableConstructor |
+  String |
+  LongString |
+  InterpolatedString
+}
+
+CallExpr {
+  PrefixExp (Args | ":" VariableName Args)+
+}
+
+Var {
+  VariableName ~stmt VarSuffix* |
+  CallExpr ~stmt VarSuffix+
+}
+
+VarSuffix {
+  "[" Expression "]" |
+  "." VariableName
+}
+
+ReturnStatement {
+  kwReturn ExpList?
+}
+
+Expression {
+  IfExpression |
+  LogicalOr
+}
+
+IfExpression {
+  kwIf Expression kwThen Expression (kwElseif Expression kwThen Expression)* kwElse Expression
+}
+
+LogicalOr { LogicalAnd ( !logicOr kwOr LogicalAnd)* }
+LogicalAnd { Comparison ( !logicAnd kwAnd Comparison)* }
+
+Comparison { Concat ( !cmp CompareOp Concat )* }
+CompareOp { "<" | ">" | "<=" | ">=" | "==" | "~=" }
+
+Concat { AddSub ( !concat ".." Concat )? }
+
+AddSub { MulDiv ( !add ("+" | "-") MulDiv )* }
+
+MulDiv { BitwiseAnd ( !mul ("*" | "/" | "//" | "%") BitwiseAnd )* }
+
+BitwiseAnd { BitwiseXor ( !bitand "&" BitwiseXor )* }
+
+BitwiseXor { BitwiseOr ( !bitxor "~" BitwiseXor )* }
+
+BitwiseOr { Shift ( !bitor "|" Shift )* }
+
+Shift { Power ( !shift ("<<" | ">>") Power )* }
+
+Power { Unary ( !exp "^" Power )? }
+
+Unary {
+  UnaryOp* PrimaryWithCast
+}
+
+UnaryOp { kwNot | "#" | "-" | "~" }
+
+PrimaryWithCast {
+  Primary (!cast "::" Type)*
+}
+
+Primary {
+  kwNil |
+  kwTrue |
+  kwFalse |
+  Number |
+  String |
+  LongString |
+  InterpolatedString |
+  "..." |
+  TableConstructor |
+  FunctionDef |
+  CallExpr |
+  PrefixExp
+}
+
+FunctionDef {
+  kwFunction TypeParams? FunctionBody
+}
+
+TableConstructor {
+  "{" FieldList? "}"
+}
+
+FieldList {
+  Field (FieldSep Field)* FieldSep?
+}
+
+FieldSep { "," | ";" }
+
+Field {
+  "[" Expression "]" "=" Expression |
+  VariableName "=" Expression |
+  Expression
+}
+
+ExpList { Expression ("," Expression)* }
+
+TypeAnno { ":" Type }
+ReturnTypeAnno { ":" Type }
+
+TypeList { Type ("," Type)* }
+
+Type { UnionType }
+
+UnionType { IntersectionType ( !bitor "|" IntersectionType )* }
+IntersectionType { OptionalType ( !bitand "&" OptionalType )* }
+OptionalType { PrimaryType !pack "..." | PrimaryType !optional "?" | PrimaryType }
+
+PrimaryType {
+  SimpleType |
+  TypeofType |
+  ParenType |
+  TableType |
+  FunctionType |
+  GenericType
+}
+
+SimpleType { TypeName }
+
+TypeofType { kwTypeof "(" Expression ")" }
+
+GenericType { TypeName TypeArgs }
+TypeArgs { !generic "<" TypeList ">" }
+
+ParenType { "(" FuncParamList? ~type ")" }
+
+TableType { "{" TypeFieldList? "}" }
+
+TypeFieldList { TypeField (FieldSep TypeField)* FieldSep? }
+
+TypeField {
+  VariableName ":" Type |
+  "[" Type "]" ":" Type |
+  Type
+}
+
+FunctionType { TypeParams? "(" FuncParamList? ~type ")" "->" Type }
+
+FuncParamList { FuncParam ("," FuncParam)* }
+FuncParam { VariableName ":" Type | "..." Type | Type }
+
+InterpolatedString {
+  InterpStart (InterpContent | Interpolation)* InterpEnd
+}
+
+Interpolation {
+  "{" Expression "}"
+}
+
+//- keyword definitions via specialization
+kwAnd { @specialize<Identifier, "and"> }
+kwOr { @specialize<Identifier, "or"> }
+kwNot { @specialize<Identifier, "not"> }
+kwIf { @specialize<Identifier, "if"> }
+kwThen { @specialize<Identifier, "then"> }
+kwElse { @specialize<Identifier, "else"> }
+kwElseif { @specialize<Identifier, "elseif"> }
+kwEnd { @specialize<Identifier, "end"> }
+kwWhile { @specialize<Identifier, "while"> }
+kwDo { @specialize<Identifier, "do"> }
+kwRepeat { @specialize<Identifier, "repeat"> }
+kwUntil { @specialize<Identifier, "until"> }
+kwFor { @specialize<Identifier, "for"> }
+kwIn { @specialize<Identifier, "in"> }
+kwFunction { @specialize<Identifier, "function"> }
+kwLocal { @specialize<Identifier, "local"> }
+kwReturn { @specialize<Identifier, "return"> }
+kwBreak { @specialize<Identifier, "break"> }
+kwNil { @specialize<Identifier, "nil"> }
+kwTrue { @specialize<Identifier, "true"> }
+kwFalse { @specialize<Identifier, "false"> }
+
+kwContinue { @specialize<Identifier, "continue"> }
+kwType { @specialize<Identifier, "type"> }
+kwExport { @specialize<Identifier, "export"> }
+kwTypeof { @specialize<Identifier, "typeof"> }
